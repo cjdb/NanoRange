@@ -421,29 +421,12 @@ split_view(R&&, range_value_t<R>)
 
 using split_view_::split_view;
 
-namespace detail {
-
-struct split_view_fn {
-
-    template <typename E, typename F>
-    constexpr auto operator()(E&& e, F&& f) const
-        -> decltype(split_view{std::forward<E>(e), std::forward<F>(f)})
-    {
-        return split_view{std::forward<E>(e), std::forward<F>(f)};
-    }
-
-    template <typename P>
-    constexpr auto operator()(P&& p) const
-    {
-        return view_closure(split_view_fn{}, std::forward<P>(p));
-    }
-};
-
-} // namespace detail
-
 namespace views {
 
-NANO_INLINE_VAR(nano::detail::split_view_fn, split)
+inline constexpr range_adaptor split =
+    []<viewable_range R, class Other>(R&& r, Other&& other) {
+        return split_view(std::forward<R>(r), std::forward<Other>(other));
+    };
 
 }
 

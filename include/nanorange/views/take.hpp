@@ -169,30 +169,13 @@ namespace detail {
 template <typename R>
 using take_view_helper_t = take_view<all_view<R>>;
 #endif
-
-struct take_view_fn {
-
-    template <typename C>
-    constexpr auto operator()(C c) const
-    {
-
-        return view_closure(take_view_fn{}, std::move(c));
-    }
-
-    template <typename E, typename F>
-    constexpr auto operator()(E&& e, F&& f) const
-        -> decltype(take_view{std::forward<E>(e), std::forward<F>(f)})
-    {
-        return take_view{std::forward<E>(e), std::forward<F>(f)};
-    }
-
-};
-
 }
 
 namespace views {
 
-NANO_INLINE_VAR(nano::detail::take_view_fn, take)
+inline constexpr range_adaptor take = []<viewable_range R>(R&& r, auto const n) constexpr {
+    return take_view(std::forward<R>(r), n);
+};
 
 }
 

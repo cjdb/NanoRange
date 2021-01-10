@@ -357,28 +357,12 @@ transform_view(R&&, F) -> transform_view<all_view<R>, F>;
 
 using transform_view_::transform_view;
 
-namespace detail {
-
-struct transform_view_fn {
-    template <typename E, typename F>
-    constexpr auto operator()(E&& e, F&& f) const
-        -> decltype(transform_view{std::forward<E>(e), std::forward<F>(f)})
-    {
-        return transform_view{std::forward<E>(e), std::forward<F>(f)};
-    }
-
-    template <typename F>
-    constexpr auto operator()(F f) const
-    {
-        return view_closure(transform_view_fn{}, std::move(f));
-    }
-};
-
-}
-
 namespace views {
 
-NANO_INLINE_VAR(nano::detail::transform_view_fn, transform)
+inline constexpr range_adaptor transform =
+    []<viewable_range R, regular_invocable<range_value_t<R>> F>(R&& r, F&& f) {
+        return transform_view(std::forward<R>(r), std::forward<F>(f));
+    };
 
 }
 

@@ -102,30 +102,11 @@ private:
 template <typename R>
 drop_view(R&&, range_difference_t<R>) -> drop_view<all_view<R>>;
 
-namespace detail {
-
-struct drop_view_fn {
-
-    template <typename E, typename F>
-    constexpr auto operator()(E&& e, F&& f) const
-        -> decltype(drop_view{std::forward<E>(e), std::forward<F>(f)})
-    {
-        return drop_view{std::forward<E>(e), std::forward<F>(f)};
-    }
-
-    template <typename C>
-    constexpr auto operator()(C c) const
-    {
-        return view_closure(drop_view_fn{}, std::move(c));
-    }
-
-};
-
-}
-
 namespace views {
 
-NANO_INLINE_VAR(nano::detail::drop_view_fn, drop)
+inline constexpr range_adaptor drop = []<viewable_range R>(R&& r, auto const n) {
+    return drop_view(std::forward<R>(r), n);
+};
 
 }
 

@@ -245,30 +245,12 @@ filter_view(R&&, Pred)->filter_view<all_view<R>, Pred>;
 
 using filter_view_::filter_view;
 
-namespace detail {
-
-struct filter_view_fn {
-    template <typename Pred>
-    constexpr auto operator()(Pred pred) const
-    {
-        return view_closure(filter_view_fn{}, std::move(pred));
-    }
-
-    template <typename R, typename Pred>
-    constexpr auto operator()(R&& r, Pred pred) const
-        noexcept(noexcept(filter_view{std::forward<R>(r), std::move(pred)}))
-        -> decltype(filter_view{std::forward<R>(r), std::move(pred)})
-    {
-        return filter_view{std::forward<R>(r), std::move(pred)};
-    }
-
-};
-
-}
-
 namespace views {
 
-NANO_INLINE_VAR(nano::detail::filter_view_fn, filter)
+inline constexpr range_adaptor filter =
+    []<viewable_range R, predicate<range_value_t<R>> Pred>(R&& r, Pred&& pred) {
+        return filter_view(std::forward<R>(r), std::forward<Pred>(pred));
+    };
 
 }
 

@@ -62,30 +62,12 @@ private:
 template <typename R, typename Pred>
 drop_while_view(R&& r, Pred pred) -> drop_while_view<all_view<R>, Pred>;
 
-namespace detail {
-
-struct drop_while_view_fn {
-
-    template <typename E, typename F>
-    constexpr auto operator()(E&& e, F&& f) const
-        -> decltype(drop_while_view{std::forward<E>(e), std::forward<F>(f)})
-    {
-        return drop_while_view{std::forward<E>(e), std::forward<F>(f)};
-    }
-
-    template <typename Pred>
-    constexpr auto operator()(Pred&& pred) const
-    {
-        return view_closure(drop_while_view_fn{}, std::forward<Pred>(pred));
-    }
-
-};
-
-} // namespace detail
-
 namespace views {
 
-NANO_INLINE_VAR(nano::detail::drop_while_view_fn, drop_while)
+inline constexpr range_adaptor drop_while =
+    []<viewable_range R, predicate<range_value_t<R>> Pred>(R&& r, Pred&& pred) {
+        return drop_while_view(std::forward<R>(r), std::forward<Pred>(pred));
+    };
 
 }
 

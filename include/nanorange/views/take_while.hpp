@@ -124,30 +124,12 @@ public:
 template <typename R, typename Pred>
 take_while_view(R&&, Pred) -> take_while_view<all_view<R>, Pred>;
 
-namespace detail {
-
-struct take_while_view_fn {
-
-    template <typename E, typename F>
-    constexpr auto operator()(E&& e, F&& f) const
-    -> decltype(take_while_view{std::forward<E>(e), std::forward<F>(f)})
-    {
-        return take_while_view{std::forward<E>(e), std::forward<F>(f)};
-    }
-
-    template <typename Pred>
-    constexpr auto operator()(Pred&& pred) const
-    {
-        return view_closure(take_while_view_fn{}, std::forward<Pred>(pred));
-    }
-
-};
-
-}
-
 namespace views {
 
-NANO_INLINE_VAR(nano::detail::take_while_view_fn, take_while)
+inline constexpr range_adaptor take_while =
+    []<viewable_range R, predicate<range_value_t<R>> Pred>(R&& r, Pred&& pred) {
+        return take_while_view(std::forward<R>(r), std::forward<Pred>(pred));
+    };
 
 }
 
