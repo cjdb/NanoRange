@@ -146,7 +146,7 @@ struct input_range_concept {
 }
 
 template <typename T>
-NANO_CONCEPT input_range =
+concept input_range =
     decltype(detail::input_range_concept::test<T>(0))::value;
 
 namespace detail {
@@ -164,7 +164,7 @@ struct forward_range_concept {
 }
 
 template <typename T>
-NANO_CONCEPT forward_range =
+concept forward_range =
     decltype(detail::forward_range_concept::test<T>(0))::value;
 
 namespace detail {
@@ -182,7 +182,7 @@ struct bidirectional_range_concept {
 }
 
 template <typename T>
-NANO_CONCEPT bidirectional_range =
+concept bidirectional_range =
     decltype(detail::bidirectional_range_concept::test<T>(0))::value;
 
 namespace detail {
@@ -200,7 +200,7 @@ struct random_access_range_concept {
 }
 
 template <typename T>
-NANO_CONCEPT random_access_range =
+concept random_access_range =
     decltype(detail::random_access_range_concept::test<T>(0))::value;
 
 namespace detail {
@@ -231,7 +231,7 @@ struct contiguous_range_concept {
 }
 
 template <typename R>
-NANO_CONCEPT contiguous_range =
+concept contiguous_range =
     decltype(detail::contiguous_range_concept::test<R>(0))::value;
 
 namespace detail {
@@ -249,11 +249,11 @@ struct common_range_concept {
 }
 
 template <typename T>
-NANO_CONCEPT common_range =
+concept common_range =
     decltype(detail::common_range_concept::test<T>(0))::value;
 
 template <typename T>
-NANO_CONCEPT viewable_range =
+concept viewable_range =
     range<T> && (borrowed_range<T> || view<remove_cvref_t<T>>);
 
 
@@ -288,7 +288,7 @@ struct simple_view_concept {
 };
 
 template <typename R>
-NANO_CONCEPT simple_view = decltype(simple_view_concept::test<R>(0))::value;
+concept simple_view = decltype(simple_view_concept::test<R>(0))::value;
 
 struct has_arrow_concept {
     template <typename I>
@@ -296,12 +296,12 @@ struct has_arrow_concept {
 };
 
 template <typename I>
-NANO_CONCEPT has_arrow = input_iterator<I> &&
+concept has_arrow = input_iterator<I> &&
     (std::is_pointer_v<I> || detail::requires_<has_arrow_concept, I>);
 
 
 template <typename T, typename U>
-NANO_CONCEPT not_same_as = !same_as<remove_cvref_t<T>, remove_cvref_t<U>>;
+concept not_same_as = !same_as<remove_cvref_t<T>, remove_cvref_t<U>>;
 
 }
 

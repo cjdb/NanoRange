@@ -209,7 +209,7 @@ struct copy_constructible_concept {
 }
 
 template <typename T>
-NANO_CONCEPT copy_constructible =
+concept copy_constructible =
     decltype(detail::copy_constructible_concept::test<T>(0))::value;
 
 NANO_END_NAMESPACE

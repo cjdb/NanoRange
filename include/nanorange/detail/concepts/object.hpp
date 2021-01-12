@@ -29,7 +29,7 @@ struct movable_concept {
 }
 
 template <typename T>
-NANO_CONCEPT movable = decltype(detail::movable_concept::test<T>(0))::value;
+concept movable = decltype(detail::movable_concept::test<T>(0))::value;
 
 // [concept.copyable]
 namespace detail {
@@ -49,15 +49,15 @@ struct copyable_concept {
 }
 
 template <typename T>
-NANO_CONCEPT copyable = decltype(detail::copyable_concept::test<T>(0))::value;
+concept copyable = decltype(detail::copyable_concept::test<T>(0))::value;
 
 // [concept.semiregular]
 template <typename T>
-NANO_CONCEPT semiregular = copyable<T> && default_initializable<T>;
+concept semiregular = copyable<T> && default_initializable<T>;
 
 // [concept.regular]
 template <typename T>
-NANO_CONCEPT regular = semiregular<T> && equality_comparable<T>;
+concept regular = semiregular<T> && equality_comparable<T>;
 
 // [concept.invocable]
 namespace detail {
@@ -78,11 +78,11 @@ struct invocable_concept {
 } // namespace detail
 
 template <typename F, typename... Args>
-NANO_CONCEPT invocable = detail::requires_<detail::invocable_concept, F, Args...>;
+concept invocable = detail::requires_<detail::invocable_concept, F, Args...>;
 
 // [concept.regularinvocable]
 template <typename F, typename... Args>
-NANO_CONCEPT regular_invocable = invocable<F, Args...>;
+concept regular_invocable = invocable<F, Args...>;
 
 // [concept.predicate]
 namespace detail {
@@ -102,21 +102,21 @@ struct predicate_concept {
 }
 
 template <typename F, typename... Args>
-NANO_CONCEPT predicate = decltype(detail::predicate_concept::test<F, Args...>(0))::value;
+concept predicate = decltype(detail::predicate_concept::test<F, Args...>(0))::value;
 
 // [concept.relation]
 template <typename R, typename T, typename U>
-NANO_CONCEPT relation =
+concept relation =
     predicate<R, T, T> && predicate<R, U, U> &&
     predicate<R, T, U> && predicate<R, U, T>;
 
 // [concept.equiv]
 template <typename R, typename T, typename U>
-NANO_CONCEPT equivalence_relation = relation<R, T, U>;
+concept equivalence_relation = relation<R, T, U>;
 
 // [concept.strictweakorder]
 template <typename R, typename T, typename U>
-NANO_CONCEPT strict_weak_order = relation<R, T, U>;
+concept strict_weak_order = relation<R, T, U>;
 
 NANO_END_NAMESPACE
 

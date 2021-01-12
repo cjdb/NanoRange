@@ -11,17 +11,11 @@
 
 NANO_BEGIN_NAMESPACE
 
-namespace detail {
-
-struct range_concept {
-    template <typename T>
-    auto requires_(T& t) -> decltype(ranges::begin(t), ranges::end(t));
-};
-
-} // namespace detail
-
 template <typename T>
-NANO_CONCEPT range = detail::requires_<detail::range_concept, T>;
+concept range = requires(T& t) {
+    ranges::begin(t);
+    ranges::end(t);
+};
 
 NANO_END_NAMESPACE
 

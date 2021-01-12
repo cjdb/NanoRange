@@ -16,7 +16,7 @@ NANO_BEGIN_NAMESPACE
 namespace detail {
 
 template <typename T>
-NANO_CONCEPT boolean_testable_impl = convertible_to<T, bool>;
+concept boolean_testable_impl = convertible_to<T, bool>;
 
 struct boolean_testable_concept {
     template <typename T>
@@ -25,7 +25,7 @@ struct boolean_testable_concept {
 };
 
 template <typename T>
-NANO_CONCEPT boolean_testable =
+concept boolean_testable =
     boolean_testable_impl<T> &&
     detail::requires_<boolean_testable_concept, T>;
 
@@ -46,13 +46,13 @@ struct weakly_equality_comparable_with_concept {
 };
 
 template <typename T, typename U>
-NANO_CONCEPT weakly_equality_comparable_with =
+concept weakly_equality_comparable_with =
     requires_<weakly_equality_comparable_with_concept, T, U>;
 
 } // namespace detail
 
 template <typename T>
-NANO_CONCEPT equality_comparable = detail::weakly_equality_comparable_with<T, T>;
+concept equality_comparable = detail::weakly_equality_comparable_with<T, T>;
 
 namespace detail {
 
@@ -76,7 +76,7 @@ struct equality_comparable_with_concept {
 }
 
 template <typename T, typename U>
-NANO_CONCEPT equality_comparable_with =
+concept equality_comparable_with =
     decltype(detail::equality_comparable_with_concept::test<T, U>(0))::value;
 
 // [concepts.totallyordered]
@@ -97,13 +97,13 @@ struct partially_ordered_with_concept {
 };
 
 template <typename T, typename U>
-NANO_CONCEPT partially_ordered_with =
+concept partially_ordered_with =
     detail::requires_<detail::partially_ordered_with_concept, T, U>;
 
 }
 
 template <typename T>
-NANO_CONCEPT totally_ordered =
+concept totally_ordered =
     equality_comparable<T> && detail::partially_ordered_with<T, T>;
 
 namespace detail {
@@ -127,7 +127,7 @@ struct totally_ordered_with_concept {
 } // namespace detail
 
 template <typename T, typename U>
-NANO_CONCEPT totally_ordered_with =
+concept totally_ordered_with =
     decltype(detail::totally_ordered_with_concept::test<T, U>(0))::value;
 
 NANO_END_NAMESPACE
