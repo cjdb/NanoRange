@@ -11,6 +11,8 @@
 #include <nanorange/views/all.hpp>
 #include <nanorange/views/interface.hpp>
 
+#include <nanorange/detail/views/view_closure.hpp>
+
 #include <optional>
 
 NANO_BEGIN_NAMESPACE
@@ -114,13 +116,7 @@ struct drop_view_fn {
     template <typename C>
     constexpr auto operator()(C c) const
     {
-        return detail::rao_proxy{[c = std::move(c)](auto&& r) mutable
-#ifndef NANO_MSVC_LAMBDA_PIPE_WORKAROUND
-            -> decltype(drop_view{std::forward<decltype(r)>(r), std::declval<C&&>()})
-#endif
-        {
-            return drop_view{std::forward<decltype(r)>(r), std::move(c)};
-        }};
+        return view_closure(drop_view_fn{}, std::move(c));
     }
 
 };

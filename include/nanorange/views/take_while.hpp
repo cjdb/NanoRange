@@ -11,6 +11,7 @@
 #include <nanorange/detail/views/semiregular_box.hpp>
 #include <nanorange/views/all.hpp>
 #include <nanorange/views/interface.hpp>
+#include <nanorange/detail/views/view_closure.hpp>
 
 NANO_BEGIN_NAMESPACE
 
@@ -137,13 +138,7 @@ struct take_while_view_fn {
     template <typename Pred>
     constexpr auto operator()(Pred&& pred) const
     {
-        return detail::rao_proxy{[p = std::forward<Pred>(pred)](auto&& r) mutable
-#ifndef NANO_MSVC_LAMBDA_PIPE_WORKAROUND
-            -> decltype(take_while_view{std::forward<decltype(r)>(r), std::declval<Pred&&>()})
-#endif
-        {
-            return take_while_view{std::forward<decltype(r)>(r), std::move(p)};
-        }};
+        return view_closure(take_while_view_fn{}, std::forward<Pred>(pred));
     }
 
 };

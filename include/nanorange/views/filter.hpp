@@ -10,6 +10,7 @@
 #include <nanorange/algorithm/find.hpp>
 #include <nanorange/detail/views/semiregular_box.hpp>
 #include <nanorange/views/all.hpp>
+#include <nanorange/detail/views/view_closure.hpp>
 
 #include <cassert>
 
@@ -250,13 +251,7 @@ struct filter_view_fn {
     template <typename Pred>
     constexpr auto operator()(Pred pred) const
     {
-        return detail::rao_proxy{[p = std::move(pred)] (auto&& r) mutable
-#ifndef NANO_MSVC_LAMBDA_PIPE_WORKAROUND
-            -> decltype(filter_view{std::forward<decltype(r)>(r), std::declval<Pred&&>()})
-#endif
-        {
-            return filter_view{std::forward<decltype(r)>(r), std::move(p)};
-        }};
+        return view_closure(filter_view_fn{}, std::move(pred));
     }
 
     template <typename R, typename Pred>

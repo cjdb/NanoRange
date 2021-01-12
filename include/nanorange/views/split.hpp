@@ -13,6 +13,7 @@
 #include <nanorange/views/all.hpp>
 #include <nanorange/views/interface.hpp>
 #include <nanorange/views/single.hpp>
+#include <nanorange/detail/views/view_closure.hpp>
 
 NANO_BEGIN_NAMESPACE
 
@@ -434,14 +435,7 @@ struct split_view_fn {
     template <typename P>
     constexpr auto operator()(P&& p) const
     {
-        return detail::rao_proxy{
-            [p = std::forward<P>(p)](auto&& r) mutable
-#ifndef NANO_MSVC_LAMBDA_PIPE_WORKAROUND
-                 -> decltype(split_view{std::forward<decltype(r)>(r), std::declval<P&&>()})
-#endif
-            {
-                return split_view{std::forward<decltype(r)>(r), std::move(p)};
-            }};
+        return view_closure(split_view_fn{}, std::forward<P>(p));
     }
 };
 

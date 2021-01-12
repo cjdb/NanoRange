@@ -11,6 +11,7 @@
 #include <nanorange/detail/views/semiregular_box.hpp>
 #include <nanorange/views/all.hpp>
 #include <nanorange/views/interface.hpp>
+#include <nanorange/detail/views/view_closure.hpp>
 
 NANO_BEGIN_NAMESPACE
 
@@ -369,13 +370,7 @@ struct transform_view_fn {
     template <typename F>
     constexpr auto operator()(F f) const
     {
-        return detail::rao_proxy{[f = std::move(f)](auto&& r) mutable
-#ifndef NANO_MSVC_LAMBDA_PIPE_WORKAROUND
-            -> decltype(transform_view{std::forward<decltype(r)>(r), std::declval<F&&>()})
-#endif
-        {
-            return transform_view{std::forward<decltype(r)>(r), std::move(f)};
-        }};
+        return view_closure(transform_view_fn{}, std::move(f));
     }
 };
 

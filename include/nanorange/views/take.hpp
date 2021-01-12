@@ -12,6 +12,7 @@
 #include <nanorange/iterator/counted_iterator.hpp>
 #include <nanorange/views/all.hpp>
 #include <nanorange/views/interface.hpp>
+#include <nanorange/detail/views/view_closure.hpp>
 
 NANO_BEGIN_NAMESPACE
 
@@ -175,15 +176,7 @@ struct take_view_fn {
     constexpr auto operator()(C c) const
     {
 
-        return detail::rao_proxy{[c = std::move(c)](auto&& r) mutable
-#ifdef NANO_MSVC_LAMBDA_PIPE_WORKAROUND
-            -> take_view_helper_t<decltype(r)>
-#else
-            -> decltype(take_view{std::forward<decltype(r)>(r), std::declval<C&&>()})
-#endif
-        {
-            return take_view{std::forward<decltype(r)>(r), std::move(c)};
-        }};
+        return view_closure(take_view_fn{}, std::move(c));
     }
 
     template <typename E, typename F>
